@@ -1,0 +1,52 @@
+.mainContainer{
+    /* border: 2pt solid blue; */
+    height: 100vh;
+    width: 99.7%;
+    display: flex;
+    background-color: #ABC1F2;
+}
+
+.leftContainer{
+    /* border: 2pt solid green; */
+    width: 40%;
+    padding-top: 6%;
+}
+
+.chattingPicture{
+    height: 80%;
+    width: 80%;
+}
+
+.rightContainer{
+    /* border: 2pt solid blue; */
+    width: 60%;
+    border-radius: 5% 0% 0% 5%;
+    background-color: white;
+}
+
+.fieldsBox{
+    border: 2pt solid #ABC1F2;
+    display: grid;
+    width: 50%;
+    height: 50%;
+    margin: 20% 0% 0% 30%;
+    border-radius: 5%;
+}
+
+.fields{
+    height: 100%;
+    display: grid;
+    gap: 5%;
+}
+
+.submitBox{
+    /* border: 2pt solid red; */
+    height: 15%;
+    margin-top: 10%;
+}
+
+.submit{
+    /* border: 2pt solid red; */
+    width: 40%;
+    height: 100%;
+}
