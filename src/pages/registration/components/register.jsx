@@ -3,29 +3,44 @@ import '../styles/register.css'
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import chattingPicture from '../../../assets/chatting.jpg'
+import { useNavigate } from "react-router-dom";
+import '../styles/otpVerification.css'
 
 function Register(){
-
-    const[username, setUsername] = useState("")
-    const[email, setEmail] = useState("")
-    const[password, setPassword] = useState("")
-    const[confirmedPassword, setConfirmedPassword] = useState("")
-    const[buttonIsDisabled, setbuttonIsDisabled] = useState(true)
-    const[passwordMatchingColor, setPasswordMatchingColor] = useState("error")
-    const[registerResponse, setRegisterResponse] = useState({})
+    const[otpConfirmationStatusMessage, setOtpConfirmationStatusMessage] = useState("");
+    const successfulOtpConfirmationMessage = "Account has been registered successfully.";
+    const failedOtpConfirmationMessage = "Incorrect otp provided. Please try again.";
+    const navigate = useNavigate();
+    const[username, setUsername] = useState("");
+    const[password, setPassword] = useState("");
+    const[confirmedPassword, setConfirmedPassword] = useState("");
+    const[buttonIsDisabled, setbuttonIsDisabled] = useState(true);
+    const[passwordMatchingColor, setPasswordMatchingColor] = useState("error");
+    const[usernameTextColor, setUsernameTextColor] = useState("success");
+    const[registerResponse, setRegisterResponse] = useState({});
+    const[registrationResponseMessage, setRegistrationResponseMessage] = useState("");
+    const[otp, setOtp] = useState(()=>{
+        const otpNumber = localStorage.getItem('otp');
+        return otpNumber ? otpNumber: 0;
+    });
+    const[email, setEmail] = useState(()=>{
+        const emailAddress = localStorage.getItem('email');
+        return emailAddress ? emailAddress: "";
+    });
 
     const handleRegistration = ()=>{
+        setbuttonIsDisabled(true)
         let registerRequest = {
             "username": username,
             "email": email,
             "password": password
         }
+        localStorage.setItem('email', email)
         fetchData(registerRequest);
     }
     
     const fetchData= useCallback(async (request)=>{
-        let url = "http://127.0.0.1:8000/register/"
-        // setIsLoading(true);
+        let url = "http://127.0.0.1:8000/register/";
         try{
             const res = await fetch(url,{
                 method:'POST',
@@ -37,11 +52,13 @@ function Register(){
             if(res.ok){
                 const data = await res.json();
                 setRegisterResponse(data);
-                alert("Account Registered successfully!")
+                setUsernameTextColor("success")
+                popUpOtpPage();
             }
             else{
                 if (res.status === 400) {
-                    alert("Account with given username or email already exists.")
+                    setUsernameTextColor("error")
+                    setRegistrationResponseMessage("Account with given username already exists.");
                 }
             }
         } catch(err){
@@ -54,6 +71,8 @@ function Register(){
         let inputValue = input.target.value;
         if (inputName === "username") {
             setUsername(inputValue);
+            setUsernameTextColor("success");
+            setRegistrationResponseMessage("");
         }
         else if (inputName === "email") {
             setEmail(inputValue)
@@ -78,6 +97,68 @@ function Register(){
                 setbuttonIsDisabled(true);
             }
         }
+        else if(inputName === "otpBox"){
+            setOtp(inputValue);
+            localStorage.setItem("otp", inputValue);
+        }
+    }
+
+
+    function popUpOtpPage(){        
+        let otpPage = document.getElementsByClassName("otpPage")[0];
+        otpPage.style.display = "block";
+        let mainContainer = document.getElementsByClassName("mainContainer")[0];
+        mainContainer.style.pointerEvents = "none";
+        mainContainer.style.filter = "blur(90px)";
+        mainContainer.style.backgroundcolor = "#d7dff3";
+        mainContainer.style.backgroundColor = "black";
+    } 
+    
+    const handleOtpConfirmation = useCallback(async ()=>{
+        const otpConfirmationRequest = {
+            'email': email,
+            'otp': localStorage.getItem("otp") 
+        }
+        const url = "http://127.0.0.1:8000/completeRegistration/";
+        try {
+            const response = await fetch(url,{
+                method:'POST',
+                headers:{
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify(otpConfirmationRequest)
+            });
+            console.log(email)
+            console.log(otp)
+            if (response.ok) {
+                setOtpConfirmationStatusMessage(successfulOtpConfirmationMessage);
+                popUpOtpConfirmationStatusMessagePage();
+            }
+            else{
+                setOtpConfirmationStatusMessage(failedOtpConfirmationMessage);
+                popUpOtpConfirmationStatusMessagePage();
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+    },[]);
+
+    const handleOtpConfirmationStatus = ()=>{
+        let otpConfirmationStatusPage = document.getElementsByClassName("otpConfirmationStatusPage")[0];
+        otpConfirmationStatusPage.style.display = "none";
+        if (otpConfirmationStatusMessage === successfulOtpConfirmationMessage) {
+            navigate("/chat");
+        }
+        else{
+            popUpOtpPage();
+        }
+    }
+
+    const popUpOtpConfirmationStatusMessagePage = ()=>{
+        let otpPage = document.getElementsByClassName("otpPage")[0];
+        otpPage.style.display = "none";
+        let otpConfirmationStatusPage = document.getElementsByClassName("otpConfirmationStatusPage")[0];
+        otpConfirmationStatusPage.style.display = "block";
     }
 
 
@@ -91,7 +172,8 @@ function Register(){
                     <div className="fieldsBox">
                         <div className="fields">
                             <div>
-                                <TextField name="username" id="standard-basic" label="Username" variant="standard" onChange={edit}/>
+                                <TextField name="username" id="standard-basic" label="Username" variant="standard" onChange={edit} color={usernameTextColor}/>
+                                <p className="registrationResponseMessage">{registrationResponseMessage}</p>
                             </div>
                             <div>
                                 <TextField name="email" id="standard-basic" label="Email address" variant="standard" onChange={edit}/>
@@ -109,6 +191,18 @@ function Register(){
                     </div>
                 </div>
             </div>
+            <div className="otpPage">                    
+                <h6 className="otpPageText">An otp has been sent to your email. Kindly enter the otp below to complete your registration.</h6>                    
+                <TextField type="number" name="otpBox" id="standard-basic" label="Enter your otp" variant="standard" onChange={edit}/><br /><br />
+                <Button onClick={handleOtpConfirmation}>SUBMIT</Button>
+            </div>
+            <div className="otpConfirmationStatusPage">
+                <br />
+                <h6 className="otpConfirmationStatusText">{otpConfirmationStatusMessage}</h6> 
+                <br />
+                <Button onClick={handleOtpConfirmationStatus}>OK</Button>
+            </div>
+            <button type="submit" onClick={popUpOtpPage}>Enter</button>
         </React.Fragment>
     )
 }
