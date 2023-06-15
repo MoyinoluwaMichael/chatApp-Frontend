@@ -5,7 +5,7 @@
     display: flex;
     background-color: #ABC1F2;
 }
-
+  
 .leftContainer{
     /* border: 2pt solid green; */
     width: 40%;
@@ -29,14 +29,14 @@
     display: grid;
     width: 50%;
     height: 50%;
-    margin: 20% 0% 0% 30%;
+    margin: 17% 0% 0% 30%;
     border-radius: 5%;
 }
 
 .fields{
     height: 100%;
     display: grid;
-    gap: 5%;
+    gap: 4%;
 }
 
 .submitBox{
@@ -49,4 +49,19 @@
     /* border: 2pt solid red; */
     width: 40%;
     height: 100%;
+}
+
+.registrationResponseMessage{
+    /* border: 2pt solid red; */
+    font-size: 80%;
+    font-style: italic;
+    width: fit-content;
+    left: 66%;
+    top: 25%;
+    position: absolute;
+    color: red;
+}
+
+.otpPage{
+    /* display: none; */
 }
