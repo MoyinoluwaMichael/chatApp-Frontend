@@ -1,0 +1,34 @@
+.page-main{
+    background: cadetblue;
+    width: 100vw;
+    height: 100vh;
+}
+
+
+.user-login-page{
+    margin: 0 auto;
+    padding: 10px;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+
+}
+
+.login-header{
+    font-family: 'Poppins', sans-serif;
+    color: #A0615F;
+    margin-left: 33%;
+}
+
+.login-form{
+    margin-top: 140px;
+    margin-left: 40%;
+}
+
+.login-button {
+    background: #A0615F;
+    color: white;
+    margin-left: 7%;
+    border-radius: 4px;
+}
