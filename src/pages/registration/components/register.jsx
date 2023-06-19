@@ -11,7 +11,10 @@ function Register(){
     const successfulOtpConfirmationMessage = "Account has been registered successfully.";
     const failedOtpConfirmationMessage = "Incorrect otp provided. Please try again.";
     const navigate = useNavigate();
-    const[username, setUsername] = useState("");
+    const[username, setUsername] = useState(()=>{
+        const user = localStorage.getItem('username');
+        return user ? user: "";
+    });
     const[password, setPassword] = useState("");
     const[confirmedPassword, setConfirmedPassword] = useState("");
     const[buttonIsDisabled, setbuttonIsDisabled] = useState(true);
@@ -27,6 +30,7 @@ function Register(){
         const emailAddress = localStorage.getItem('email');
         return emailAddress ? emailAddress: "";
     });
+    const[otpStatusPageButtonPlaceHolder, setOtpStatusPageButtonPlaceHolder]=useState("");
 
     const handleRegistration = ()=>{
         setbuttonIsDisabled(true)
@@ -59,6 +63,11 @@ function Register(){
                 if (res.status === 400) {
                     setUsernameTextColor("error")
                     setRegistrationResponseMessage("Account with given username already exists.");
+                    let regRespElement = document.createElement("div");
+                    regRespElement.className = "registrationResponseMessage";
+                    let msg = document.createTextNode("Account with given username already exists.")
+                    regRespElement.appendChild(msg);
+                    document.getElementsByClassName("username")[0].append(regRespElement);
                 }
             }
         } catch(err){
@@ -71,6 +80,7 @@ function Register(){
         let inputValue = input.target.value;
         if (inputName === "username") {
             setUsername(inputValue);
+            localStorage.setItem("username", inputValue);
             setUsernameTextColor("success");
             setRegistrationResponseMessage("");
         }
@@ -132,12 +142,13 @@ function Register(){
             console.log(otp)
             if (response.ok) {
                 setOtpConfirmationStatusMessage(successfulOtpConfirmationMessage);
-                popUpOtpConfirmationStatusMessagePage();
+                setOtpStatusPageButtonPlaceHolder("Goto Dashboard")
             }
             else{
                 setOtpConfirmationStatusMessage(failedOtpConfirmationMessage);
-                popUpOtpConfirmationStatusMessagePage();
+                setOtpStatusPageButtonPlaceHolder("Try again")
             }
+            popUpOtpConfirmationStatusMessagePage();
         } catch (error) {
             console.log(error.message)
         }
@@ -147,7 +158,7 @@ function Register(){
         let otpConfirmationStatusPage = document.getElementsByClassName("otpConfirmationStatusPage")[0];
         otpConfirmationStatusPage.style.display = "none";
         if (otpConfirmationStatusMessage === successfulOtpConfirmationMessage) {
-            navigate("/chat");
+            navigate("/dashboard");
         }
         else{
             popUpOtpPage();
@@ -171,9 +182,8 @@ function Register(){
                 <div className="rightContainer">
                     <div className="fieldsBox">
                         <div className="fields">
-                            <div>
+                            <div className="username">
                                 <TextField name="username" id="standard-basic" label="Username" variant="standard" onChange={edit} color={usernameTextColor}/>
-                                <p className="registrationResponseMessage">{registrationResponseMessage}</p>
                             </div>
                             <div>
                                 <TextField name="email" id="standard-basic" label="Email address" variant="standard" onChange={edit}/>
@@ -184,10 +194,10 @@ function Register(){
                             <div>
                                 <TextField type="password" name="confirmedPassword" id="standard-basic" label="Confirm password" variant="standard" onChange={edit} color={passwordMatchingColor}/>
                             </div>
+                        </div>
                             <div className="submitBox">
                                 <Button className="button" variant="contained" onClick={handleRegistration} disabled={buttonIsDisabled} >Register</Button> 
                             </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -198,9 +208,9 @@ function Register(){
             </div>
             <div className="otpConfirmationStatusPage">
                 <br />
-                <h6 className="otpConfirmationStatusText">{otpConfirmationStatusMessage}</h6> 
+                <h6 className="otpPageText">{otpConfirmationStatusMessage}</h6> 
                 <br />
-                <Button onClick={handleOtpConfirmationStatus}>OK</Button>
+                <Button onClick={handleOtpConfirmationStatus}>{otpStatusPageButtonPlaceHolder}</Button>
             </div>
             <button type="submit" onClick={popUpOtpPage}>Enter</button>
         </React.Fragment>

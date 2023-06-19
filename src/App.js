@@ -7,6 +7,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Register from './pages/registration/components/register';
 import LoginUser from './pages/authentication/components/LoginUser';
 import ChattingInterface from './pages/registration/components/chat';
+import ErrorPage from './pages/registration/components/errorPage';
+import ChattingInterface from './pages/chattingInterface/components/chattingInterface';
 function App() {
   return (
     <div className="App">
@@ -14,7 +16,8 @@ function App() {
         <Route path= "/" element={<LoginUser/>} />
       <Router>
         <Routes>
-          <Route path='/chat' Component={ChattingInterface}/>
+          <Route path='*' Component={ErrorPage}/>
+          <Route path='/dashboard' Component={ChattingInterface}/>
           <Route path='/' element={<Register/>}/>
         </Routes>
       </Router>

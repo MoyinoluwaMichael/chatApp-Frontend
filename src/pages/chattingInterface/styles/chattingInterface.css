@@ -1,0 +1,89 @@
+.chatMainContainer {
+    display: flex;
+    height: 100vh;
+    background-color: #d5dceb;
+}
+  
+.chatLeftContainer {
+    width: 25%;
+    padding: 20px;
+}
+
+.friendsList {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 86vh;
+    overflow-y: auto;
+}
+
+.friendsList button{
+    background-color: #d5dceb;
+    border: none;
+    width:95%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-family:Verdana;
+    font-size: 100%;
+    gap: 5%;
+    padding: 10px;
+    margin: 5px;
+}
+
+.profilePic{
+    width: 10%;
+    height: 100%;
+    border-radius: 50%;
+}
+  
+  .chatRightContainer {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    background-color: #b2c3e9;
+    border-radius: 5% 0% 0% 5%;
+  }
+  
+  .chatContainer {
+    flex: 1;
+    overflow-y: auto;
+  }
+  
+  .senderMessage {
+    background-color: #FFFFFF;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: fit-content;
+    margin-left: auto;
+    border-style:ridge;
+  }
+  
+  .recipientMessage {
+    background-color: #FFFFFF;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: fit-content;
+    border-style:ridge;
+  }
+  
+  .inputContainer {
+    display: flex;
+    margin-top: 20px;
+  }
+  
+  .chatBox {
+    flex: 1;
+    padding: 10px;
+  }
+  
+  .inputContainer button {
+    background-color: #3874f5;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
