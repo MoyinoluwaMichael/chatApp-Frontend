@@ -1,14 +1,16 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; 
 import Register from './pages/registration/components/register';
-import ChattingInterface from './pages/registration/components/chat';n
+import ErrorPage from './pages/registration/components/errorPage';
+import ChattingInterface from './pages/chattingInterface/components/chattingInterface';
 
 function App() {
   return (
     <div className="App">
       <Router>
         <Routes>
-          <Route path='/chat' Component={ChattingInterface}/>
+          <Route path='*' Component={ErrorPage}/>
+          <Route path='/dashboard' Component={ChattingInterface}/>
           <Route path='/' element={<Register/>}/>
         </Routes>
       </Router> 

@@ -22,14 +22,16 @@
     width: 60%;
     border-radius: 5% 0% 0% 5%;
     background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .fieldsBox{
     border: 2pt solid #ABC1F2;
     display: grid;
     width: 50%;
-    height: 50%;
-    margin: 17% 0% 0% 30%;
+    height:fit-content;
     border-radius: 5%;
 }
 
@@ -37,6 +39,9 @@
     height: 100%;
     display: grid;
     gap: 4%;
+    display: flexbox;
+    justify-content: center;
+    align-items: center;
 }
 
 .submitBox{
@@ -56,12 +61,5 @@
     font-size: 80%;
     font-style: italic;
     width: fit-content;
-    left: 66%;
-    top: 25%;
-    position: absolute;
     color: red;
-}
-
-.otpPage{
-    /* display: none; */
 }
