@@ -23,8 +23,18 @@
     border-radius: 5% 0% 0% 5%;
     background-color: white;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.loginRef{
+    color: #6894f3;
+}
+
+.loginRef a{
+    color: red;
+    font-family: Verdana;
 }
 
 .fieldsBox{

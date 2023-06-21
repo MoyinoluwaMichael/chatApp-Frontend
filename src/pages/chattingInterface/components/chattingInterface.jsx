@@ -10,6 +10,8 @@ function ChattingInterface() {
   const [friends, setFriends] = useState([]);
   const [chatBox, setChatBox] = useState(new Array(friends.length));
   const [currentFriendIndex, setCurrentFriendIndex] = useState(0);
+  const username = localStorage.getItem("username");
+  console.log(localStorage.getItem("username"));
   const fetchFriends = useCallback(async () => {
     const url = "http://127.0.0.1:8000/register/";
         try {
@@ -42,7 +44,7 @@ function ChattingInterface() {
     const url = "http://127.0.0.1:8000/chatBox/";
 
     const chatRequest = {
-        'sender_username': "moyin",
+        'sender_username': username,
         'recipient_username': friends[currentFriendIndex].username,
         'message': message.trim()
     }
@@ -59,7 +61,6 @@ function ChattingInterface() {
         })
         if (response.ok) {
             const data = await response.json();
-            console.log(`Response:: ${data}`);
         }
         else{
             console.log(response);
@@ -92,7 +93,7 @@ function ChattingInterface() {
         if (friendChatBox == undefined) {
             const request = {
                 'friendUsername': friend.username,
-                'username': "moyin"
+                'username': username
             };
             try {
                 const url = "http://127.0.0.1:8000/chatBox/";
@@ -125,7 +126,10 @@ function ChattingInterface() {
         <h2>Friends List</h2>
         <div className="friendsList">
             {friends.map((friend, index) => {
-                if (friend.username != "moyin") {
+                console.log(friend.username)
+                console.log(`username is ${username}`)
+                console.log(localStorage.getItem("username"))
+                if (friend.username != username) {
                     return(
                         <button key={index} className="friendItem" onMouseEnter={handleHover} onMouseLeave={handleUnHover} onClick={()=>openChatBox(index)}>
                             <img className="profilePic" src={emptyPic} alt="" />
@@ -140,7 +144,7 @@ function ChattingInterface() {
       <div className="chatRightContainer">
         <div className="chatContainer">
           {chatBox[currentFriendIndex]?.map((chat, index) => {
-            if (chat.sender_username == "moyin") {
+            if (chat.sender_username == username) {
                 return(
                     <div className="senderMessage">
                         {chat.message}

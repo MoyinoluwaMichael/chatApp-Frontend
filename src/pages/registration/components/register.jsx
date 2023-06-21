@@ -138,8 +138,6 @@ function Register(){
                 },
                 body: JSON.stringify(otpConfirmationRequest)
             });
-            console.log(email)
-            console.log(otp)
             if (response.ok) {
                 setOtpConfirmationStatusMessage(successfulOtpConfirmationMessage);
                 setOtpStatusPageButtonPlaceHolder("Goto Dashboard")
@@ -198,6 +196,9 @@ function Register(){
                             <div className="submitBox">
                                 <Button className="button" variant="contained" onClick={handleRegistration} disabled={buttonIsDisabled} >Register</Button> 
                             </div>
+                    </div>
+                    <div className="loginRef">
+                        Do you have a registered account?<a href="http://localhost:3000/authenticate">Login</a>
                     </div>
                 </div>
             </div>

@@ -1,13 +1,15 @@
 import React, {useCallback, useState} from "react";
 import "../styles/LoginUser.css";
+import { useNavigate } from "react-router-dom";
 
 
 function LoginUser() {
 
-    const[username, setUsername] = useState("")
-    const[password, setPassword] = useState("")
-    const[buttonInactive, setButtonInactive] = useState((true))
-    const[loginResponse, setLoginResponse] = useState({})
+    const[username, setUsername] = useState("");
+    const[password, setPassword] = useState("");
+    const[buttonInactive, setButtonInactive] = useState((true));
+    const[loginResponse, setLoginResponse] = useState({});
+    const navigate = useNavigate();
 
     const handleLogin = ()=>{
         let loginRequest = {
@@ -31,10 +33,12 @@ function LoginUser() {
         if(res.ok){
             const data = await res.json();
             setLoginResponse(data);
-            alert("You are in")
+            console.log(data)
+            localStorage.setItem("username", username);
+            navigate("/dashboard");
         }
         else{
-            if (res.status === 400) {
+            if (res.status === 401) {
                 alert("Invalid Login Credentials.")
             }
         }
@@ -50,6 +54,7 @@ function LoginUser() {
 
         if(inputIdentity === "username"){
             setUsername(inputValue);
+            localStorage.setItem("username", inputValue);
         }
         else if (inputIdentity === "password"){
             setPassword(inputValue)}
@@ -66,7 +71,7 @@ function LoginUser() {
             <h1 className="login-header">
                 7 Ate 9 -- (No more a secret 🤐)
             </h1>
-            <form className="login-form">
+            <div className="login-form" >
                 <label className="username-label">
                     <input type="text" placeholder="Enter your email address" name="username" onChange={fillIn}/>
                 </label>
@@ -76,8 +81,8 @@ function LoginUser() {
                     <input className="login-input" type="password" placeholder="Enter your password" name="password" onChange={fillIn}/>
                 </label>
                 <br/><br/>
-                <button className="login-button" onClick={handleLogin} disabled={buttonInactive}>Login</button>
-            </form>
+                <button type="submit" onClick={handleLogin} className="login-button" disabled={buttonInactive}>Login</button>
+            </div>
 
         </div>
         </div>
