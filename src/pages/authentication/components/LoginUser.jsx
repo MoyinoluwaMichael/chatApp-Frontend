@@ -16,10 +16,10 @@ function LoginUser() {
             "username": username,
             "password": password
         }
-        fetchData(loginRequest);
+        authenticate(loginRequest);
     }
 
-    const fetchData = useCallback(async (request) => {
+    const authenticate = useCallback(async (request) => {
 
     let url = "http://localhost:8000/auth/jwt/create";
     try{
@@ -33,8 +33,6 @@ function LoginUser() {
         if(res.ok){
             const data = await res.json();
             setLoginResponse(data);
-            console.log(data)
-            localStorage.setItem("username", username);
             navigate("/dashboard");
         }
         else{
@@ -55,6 +53,7 @@ function LoginUser() {
         if(inputIdentity === "username"){
             setUsername(inputValue);
             localStorage.setItem("username", inputValue);
+            console.log(localStorage.getItem("username"))
         }
         else if (inputIdentity === "password"){
             setPassword(inputValue)}

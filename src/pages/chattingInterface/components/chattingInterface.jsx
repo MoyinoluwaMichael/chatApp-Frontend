@@ -8,10 +8,14 @@ function ChattingInterface() {
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
   const [friends, setFriends] = useState([]);
-  const [chatBox, setChatBox] = useState(new Array(friends.length));
+  const [chatBox, setChatBox] = useState(new Array(friends.length).fill([]));
   const [currentFriendIndex, setCurrentFriendIndex] = useState(0);
   const username = localStorage.getItem("username");
-  console.log(localStorage.getItem("username"));
+
+  useEffect(() => {
+    setChatBox(new Array(friends.length).fill([]));
+  }, [friends]);
+
   const fetchFriends = useCallback(async () => {
     const url = "http://127.0.0.1:8000/register/";
         try {
@@ -48,8 +52,10 @@ function ChattingInterface() {
         'recipient_username': friends[currentFriendIndex].username,
         'message': message.trim()
     }
-    const updatedChats = [...chatBox[currentFriendIndex], chatRequest];
-    chatBox[currentFriendIndex] = updatedChats;
+    const updatedChatBox = [...chatBox];
+    updatedChatBox[currentFriendIndex] = [...updatedChatBox[currentFriendIndex], chatRequest];
+    setChatBox(updatedChatBox);
+    
     setMessage("");
     try {
         const response = await fetch(url, {
@@ -88,9 +94,13 @@ function ChattingInterface() {
     }
 
     const openChatBox = useCallback( async (index)=> {
+        console.log(index)
+        console.log(friends[index])
         let friend = friends[index];
         let friendChatBox = chatBox[index];
-        if (friendChatBox == undefined) {
+        console.log(friendChatBox.length)
+        if (friendChatBox.length == 0) {
+            console.log("Yes")
             const request = {
                 'friendUsername': friend.username,
                 'username': username
@@ -117,6 +127,7 @@ function ChattingInterface() {
                 console.log(error.message);
             }
         }
+        console.log(friendChatBox)
         setCurrentFriendIndex(index);
     })
 
@@ -126,10 +137,7 @@ function ChattingInterface() {
         <h2>Friends List</h2>
         <div className="friendsList">
             {friends.map((friend, index) => {
-                console.log(friend.username)
-                console.log(`username is ${username}`)
-                console.log(localStorage.getItem("username"))
-                if (friend.username != username) {
+                if (String(friend.username).toLocaleLowerCase() != String(username).toLowerCase()) {
                     return(
                         <button key={index} className="friendItem" onMouseEnter={handleHover} onMouseLeave={handleUnHover} onClick={()=>openChatBox(index)}>
                             <img className="profilePic" src={emptyPic} alt="" />
@@ -148,7 +156,7 @@ function ChattingInterface() {
                 return(
                     <div className="senderMessage">
                         {chat.message}
-                        </div>
+                    </div>
                     )
             }
             else {
