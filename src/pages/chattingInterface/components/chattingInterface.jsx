@@ -1,17 +1,29 @@
 import React, { useCallback, useState, useEffect } from "react";
 import "../styles/chattingInterface.css";
 import emptyPic from '../../../assets/emptyPic.jpeg';
-import { json } from "react-router-dom";
+
+
+
+let getIpAddress = fetch('https://api.ipify.org?format=json')
+.then(response => response.json())
+.then(data => {
+  const ipAddress = data.ip;
+  console.log('IP Address:', ipAddress);
+  return ipAddress;
+})
+.catch(error => {
+  console.error('Error:', error);
+});
+
 
 function ChattingInterface() {
-  const [height, setHeight] = useState(0);
+  const [ipAddress, setIpAddress] = useState(getIpAddress);
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
   const [friends, setFriends] = useState([]);
   const [chatBox, setChatBox] = useState(new Array(friends.length).fill([]));
   const [currentFriendIndex, setCurrentFriendIndex] = useState(0);
   const username = localStorage.getItem("username");
-
   useEffect(() => {
     setChatBox(new Array(friends.length).fill([]));
   }, [friends]);
@@ -76,6 +88,8 @@ function ChattingInterface() {
     }
   })
 
+
+
   function handleHover(button){
 
     button.target.style.backgroundColor = "#c2cfec";
@@ -85,8 +99,7 @@ function ChattingInterface() {
         button.target.style.backgroundColor = "#d5dceb";
     }
 
-    function getUsername(username){
-        
+    function getUsername(username){        
         let length = username.length;
         let firstLetter = username.charAt(0).toUpperCase();
         username = firstLetter.concat(username.slice(1, length));
@@ -94,42 +107,54 @@ function ChattingInterface() {
     }
 
     const openChatBox = useCallback( async (index)=> {
-        console.log(index)
-        console.log(friends[index])
         let friend = friends[index];
         let friendChatBox = chatBox[index];
-        console.log(friendChatBox.length)
         if (friendChatBox.length == 0) {
-            console.log("Yes")
-            const request = {
-                'friendUsername': friend.username,
-                'username': username
-            };
-            try {
-                const url = "http://127.0.0.1:8000/chatBox/";
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(request)
-                    
-                })
-                if (response.ok) {
-                    const data = await response.json();
-                    chatBox[index]= data;
-                }
-                else{
-                    console.log(response);
-                }
-                
-            } catch (error) {
-                console.log(error.message);
-            }
+            fetchChatBox(friend.username, index);
         }
         console.log(friendChatBox)
         setCurrentFriendIndex(index);
     })
+
+    
+    const fetchChatBoxUrl = "http://127.0.0.1:8000/chatBox/"
+
+    const fetchChatBox = useCallback(async (friendUsername, index)=>{
+        try {
+            const response = await fetch(fetchChatBoxUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'friendUsername': friendUsername,
+                    'username': username
+                })
+                
+            })
+            if (response.ok) {
+                const data = await response.json();
+                chatBox[index]= data;
+            }
+            else{
+                console.log(response);
+            }
+            
+        } catch (error) {
+            console.log(error.message);
+        }
+    })
+
+    useEffect(()=>{
+        const intervalId = setInterval(()=>{
+            for (let index = 0; index < friends.length; index++) {
+              if(chatBox[index].length != 0){
+                fetchChatBox(friends[index], index);
+            }
+          }
+        }, 1000);
+        return ()=>clearInterval(intervalId);
+    });
 
   return (
     <div className="chatMainContainer">
@@ -152,18 +177,19 @@ function ChattingInterface() {
       <div className="chatRightContainer">
         <div className="chatContainer">
           {chatBox[currentFriendIndex]?.map((chat, index) => {
-            if (chat.sender_username == username) {
+            console.log(chat)
+            if (String(chat.sender_username).toLowerCase() == String(username).toLowerCase()) {
                 return(
-                    <div className="senderMessage">
+                    <p className="senderMessage">
                         {chat.message}
-                    </div>
+                    </p>
                     )
             }
             else {
                 return(
-                    <div key={index} className="recipientMessage">
+                    <p key={index} className="recipientMessage">
                       {chat.message}
-                    </div>
+                    </p>
                 )
             }
           })}
